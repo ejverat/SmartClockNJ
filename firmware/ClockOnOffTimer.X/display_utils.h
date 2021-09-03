@@ -17,6 +17,7 @@
 #include "motor_alarm.h"
 #include "dual_day_alarm.h"
 #include "day_alarm.h"
+#include "mode.h"
 
 const char day_str[7][4] = {
 	"SUN","MON","TUE","WED","THR","FRI","SAT"
@@ -26,7 +27,7 @@ const char hour_pm_am_str[2][3] = {"AM","PM"};
 const char day_enabled_str[2] = {'X','E'};
 const char motor_direction_str[2][6] = {"RIGHT","LEFT"};
 const char alarm_type_str[2][6] = {"ON ","OFF"};
-const char mode_str[2][6] = {"PIR","ALARM"};
+const char mode_str[3][7] = {"PIR","ALARM","MANUAL"};
 const char alarm_status_str[2][9] = {"INACTIVE","ACTIVE  "};
 //  0123456789012345
 // "DAY hh:mm:ss PM "
@@ -85,7 +86,7 @@ extern "C" {
 	void alarm_time_to_string(alarm_t *alarm, char *string);
 	void motor_direction_to_string(motor_direction_t direction, char *string);
 	void alarm_days_to_string(alarm_t *alarm, char *string);
-	void mode_to_string(bool alarm_npir_mode, char *string);
+	void mode_to_string(mode_t mode, char *string);
 	void display_edit_day_alarm_screen(bool alarm1, dual_day_alarm_t *alarm);
 	void display_dualday_alarm_screen(dual_day_alarm_t *alarm);
 	void display_update_alarm_hour(uint8_t hour);

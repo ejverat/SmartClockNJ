@@ -24,6 +24,8 @@
 #define LCD_RS 		0b10000000
 #define LCD_ENABLE 	0b01000000
 
+#define DEFAULT_TIME_TO_SPIN_MS  2000
+
 static mcp23s17_t io_expander;
 static text_display_t display;
 #if defined (USE_DS3231)
@@ -36,7 +38,8 @@ static motor_t motor;
 static smart_pir_t spir;
 static dual_day_alarm_t dualday_alarms[7];
 
-static bool alarm_npir_mode;
+static mode_t current_mode;
+static uint64_t time_to_spin;
 
 
 static void config_sys_timer();
@@ -68,7 +71,8 @@ void config_devices()
 	config_rtc();
 	config_motor();
 	config_pir();
-	alarm_npir_mode = false;
+	current_mode = PIR_MODE;
+	time_to_spin = DEFAULT_TIME_TO_SPIN_MS;
 
 	uint8_t idx;
 
@@ -111,21 +115,23 @@ dual_day_alarm_t *get_dualday_alarms()
 	return &dualday_alarms[0];
 }
 
-bool is_alarm_mode()
+mode_t get_mode()
 {
-	return alarm_npir_mode;
+	return current_mode;
 }
-bool is_pir_mode()
+
+void set_mode(mode_t mode)
 {
-	return !alarm_npir_mode;
+	current_mode = mode;
 }
-void set_to_pir_mode()
+uint64_t get_time_to_spin()
 {
-	alarm_npir_mode = false;
+	return time_to_spin;
 }
-void set_to_alarm_mode()
+
+void set_time_to_spin(uint64_t time_ms)
 {
-	alarm_npir_mode = true;
+	time_to_spin = time_ms;
 }
 
 static void config_sys_timer()

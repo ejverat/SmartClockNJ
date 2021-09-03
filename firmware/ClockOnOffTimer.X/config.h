@@ -8,12 +8,13 @@
 #ifndef CONFIG_H
 #define	CONFIG_H
 
-#include <stdbool.h>
+#include <stdint.h>
 
 #include "text_display.h"
 #include "motor.h"
 #include "smart_pir.h"
 #include "dual_day_alarm.h"
+#include "mode.h"
 
 #define PIR_MINIMUM_INACTIVE_TIME 1000*60*5
 #define SLEEP_TIMEOUT_MS 5000
@@ -45,10 +46,10 @@ extern "C" {
 	motor_t *get_motor();
 	smart_pir_t *get_pir();
 	dual_day_alarm_t *get_dualday_alarms();
-	bool is_alarm_mode();
-	bool is_pir_mode();
-	void set_to_pir_mode();
-	void set_to_alarm_mode();
+	mode_t get_mode();
+	void set_mode(mode_t mode);
+	uint64_t get_time_to_spin();
+	void set_time_to_spin(uint64_t time_ms);
 
 #ifdef	__cplusplus
 }

@@ -24,26 +24,17 @@ static menu_t *current_menu;
 static menu_t m_current_time;
 static menu_t m_edit_time_q;
 static menu_t m_edit_time;
-static menu_t m_edit_alarms_q;
-static menu_t m_alarm_edit_q;
 static menu_t m_alarm_list;
-static menu_t m_alarm_edit;
-static menu_t m_alarm_add_q;
-static menu_t m_alarm_add;
-static menu_t m_alarm_delete_q;
-static menu_t m_alarm_delete;
-static menu_t m_change_mode_q;
-static menu_t m_change_mode;
-static menu_t m_alarm;
 static menu_t m_current_pir_status;
 static menu_t m_sleep;
-static menu_t m_change_to_alarm_mode_q;
-static menu_t m_change_to_pir_mode_q;
+static menu_t m_change_mode_q;
+static menu_t m_change_mode;
 static menu_t m_list_alarms_q;
 static menu_t m_edit_on_alarm_q;
 static menu_t m_edit_off_alarm_q;
 static menu_t m_edit_on_alarm;
 static menu_t m_edit_off_alarm;
+static menu_t m_current_manual_status;
 
 typedef enum 
 {
@@ -78,6 +69,7 @@ static dual_day_alarm_t *dual_alarm_ptr;
 static day_alarm_t *day_alarm_ptr;
 static dual_alarm_field_t dual_alarm_field;
 static void (*callback_fn) (void);
+static mode_t selected_mode;
 
 const char edit_time_title[] = "ED. TIME(+,ok,-)";
 static void display_edit_time_q();
@@ -101,18 +93,18 @@ static void display_on_alarm_q();
 static void display_off_alarm_q();
 static void display_edit_on_alarm();
 static void display_edit_off_alarm();
+static void display_change_mode_q();
+static void display_change_mode();
 static void go_to_current_time();
 static void go_to_pir_status();
 static void go_to_pir_mode();
 static void go_to_edit_time_q();
-static void go_to_edit_alarms_q();
-static void go_to_edit_alarm();
-static void go_to_prev_alarm();
-static void go_to_next_alarm();
-static void go_to_add_alarm();
 static void go_to_change_mode_q();
+static void go_to_change_mode();
+static void go_to_update_mode();
+static void go_prev_mode();
+static void go_next_mode();
 static void go_to_alarm_mode_q();
-static void go_to_pir_mode_q();
 static void go_to_list_alarms_q();
 static void go_to_list_alarms();
 static void go_to_edit_on_alarm_q();
@@ -172,41 +164,43 @@ void init_menus()
 	/* Menu config for pir mode*/
 
 	current_menu = &m_current_pir_status;
+	selected_mode = PIR_MODE;
+
 	m_current_pir_status.refresh = display_current_pir_status;
 	//m_current_pir_status.on_ok = do_nothing;
 	m_current_pir_status.on_ok = display_current_pir_status;
-	m_current_pir_status.on_dec = go_to_alarm_mode_q;
-	m_current_pir_status.on_inc = go_to_alarm_mode_q;
+	m_current_pir_status.on_dec = go_to_change_mode_q;
+	m_current_pir_status.on_inc = go_to_change_mode_q;
 	m_current_pir_status.on_timeout = go_to_wake;
 	m_current_pir_status.timeout_ms = TIMEOUT_DISPLAY;
 
-	m_change_to_alarm_mode_q.refresh = display_change_to_alarm_mode_q;
-	m_change_to_alarm_mode_q.on_ok = go_to_current_time;
-	m_change_to_alarm_mode_q.on_dec = do_nothing;
-	m_change_to_alarm_mode_q.on_inc = do_nothing;
-	m_change_to_alarm_mode_q.on_timeout = go_to_pir_status;
-	m_change_to_alarm_mode_q.timeout_ms = TIMEOUT_INACTIVITY;
+	m_change_mode_q.refresh = display_change_mode_q;
+	m_change_mode_q.on_ok = go_to_change_mode;
+	m_change_mode_q.on_dec = do_nothing;
+	m_change_mode_q.on_inc = do_nothing;
+	m_change_mode_q.on_timeout = go_to_home;
+	m_change_mode_q.timeout_ms = TIMEOUT_INACTIVITY;
+
+	m_change_mode.refresh = display_change_mode;
+	m_change_mode.on_ok = go_to_update_mode;
+	m_change_mode.on_dec = go_prev_mode;
+	m_change_mode.on_inc = go_next_mode;
+	m_change_mode.on_timeout = do_nothing;
+	m_change_mode.timeout_ms = max_timeout_value;
 
 	/* Menu config for alarm mode*/
 
 	m_current_time.refresh = display_current_timeday;
 	//m_current_time.on_ok = do_nothing;
 	m_current_time.on_ok = display_current_timeday;
-	m_current_time.on_dec = go_to_pir_mode_q;
+	m_current_time.on_dec = go_to_change_mode_q;
 	m_current_time.on_inc = go_to_edit_time_q;
 	m_current_time.on_timeout = go_to_wake;
 	m_current_time.timeout_ms = TIMEOUT_DISPLAY;
 
-	m_change_to_pir_mode_q.refresh = display_change_to_pir_mode_q;
-	m_change_to_pir_mode_q.on_ok = go_to_pir_mode;
-	m_change_to_pir_mode_q.on_dec = go_to_list_alarms_q;
-	m_change_to_pir_mode_q.on_inc = go_to_edit_time_q;
-	m_change_to_pir_mode_q.on_timeout = go_to_home;
-	m_change_to_pir_mode_q.timeout_ms = TIMEOUT_INACTIVITY;
-
 	m_edit_time_q.refresh = display_edit_time_q;
 	m_edit_time_q.on_ok = go_to_edit_time;
-	m_edit_time_q.on_dec = go_to_pir_mode_q;
+	m_edit_time_q.on_dec = go_to_change_mode_q;
 	m_edit_time_q.on_inc = go_to_list_alarms_q;
 	m_edit_time_q.on_timeout = go_to_home;
 	m_edit_time_q.timeout_ms = TIMEOUT_INACTIVITY;
@@ -215,7 +209,7 @@ void init_menus()
 	m_list_alarms_q.refresh = display_list_alarms_q;
 	m_list_alarms_q.on_ok = go_to_list_alarms;
 	m_list_alarms_q.on_dec = go_to_edit_time_q;
-	m_list_alarms_q.on_inc = go_to_pir_mode_q;
+	m_list_alarms_q.on_inc = go_to_change_mode_q;
 	m_list_alarms_q.on_timeout = go_to_home;
 	m_list_alarms_q.timeout_ms = TIMEOUT_INACTIVITY;
 
@@ -267,6 +261,31 @@ void init_menus()
 	m_edit_off_alarm.on_inc = inc_dualday_alarm_field;
 	m_edit_off_alarm.on_timeout = do_nothing;
 	m_edit_off_alarm.timeout_ms = max_timeout_value;
+
+	/* Menu config for Manual mode */
+	m_current_manual_status.refresh = display_manual_status;
+	m_current_manual_status.on_ok = display_manual_status;
+	m_current_manual_status.on_dec = go_to_change_mode_q;
+	m_current_manual_status.on_inc = go_to_move_motor_q;
+	m_current_manual_status.on_timeout = go_to_wake;
+	m_current_manual_status.timeout_ms = TIMEOUT_DISPLAY;
+
+	m_move_motor_q.refresh = display_move_motor_q;
+	m_move_motor_q.on_ok = go_to_move_motor;
+	m_move_motor_q.on_dec = go_to_change_mode_q;
+	m_move_motor_q.on_inc = go_to_change_spin_time_q;
+	m_move_motor_q.on_timeout = go_to_home;
+	m_move_motor_q.timeout_ms = TIMEOUT_INACTIVITY;
+
+	m_move_motor.refresh = display_move_motor;
+	m_move_motor.on_ok = go_to_home;
+	m_move_motor.on_dec = go_to_off_motor;
+	m_move_motor.on_inc = go_to_on_motor;
+	m_move_motor.on_timeout = do_nothing;
+	m_move_motor.timeout_ms = max_timeout_value;
+
+	m_change_spin_time_q
+	m_change_spin_time
 
 	m_sleep.refresh = do_nothing;
 	m_sleep.on_ok = go_to_wake;
@@ -679,9 +698,42 @@ static void display_edit_off_alarm()
 	display_update_alarm_hour(day_alarm_ptr->time.hour);
 }
 
+static void display_change_mode_q()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	display_set_cursor(display,0,0);
+	display_cursor_off(display);
+	display_blink_off(display);
+	display_print_text(display,"CHANGE MODE?");
+	display_set_cursor(display,0,0);
+	display_set_cursor(display, 0, 1);
+	display_print_text(display,"(-,ok,+)");
+}
+
+static void display_change_mode()
+{
+	text_display_t *display = get_text_display();
+	//display text
+	display_set_cursor(display, 0, 0);
+	display_print_text(display, "MODE(+,ok,-)");
+	display_set_cursor(display, 0, 1);
+
+	char text[17];
+	memset(text,'\0',17);
+	mode_to_string(selected_mode, &text[6]);
+	display_print_text(display, text);
+
+	//enable cursor and blink
+	display_cursor_on(display);
+	display_blink_on(display);
+	display_set_cursor(display, 0, 1);
+
+}
+
 static void go_to_current_time()
 {
-	set_to_alarm_mode();
+	set_mode(ALARM_MODE);
 	current_menu = &m_current_time;
 	current_menu->refresh();
 	sleep_enabled = true;
@@ -703,7 +755,7 @@ static void go_to_pir_mode()
 		pir->device_status = false;
 		pir->status_changed = false;
 	}
-	set_to_pir_mode();
+	set_mode(PIR_MODE);
 	current_menu = &m_current_pir_status;
 	current_menu->refresh();
 	sleep_enabled = true;
@@ -712,20 +764,6 @@ static void go_to_pir_mode()
 static void go_to_edit_time_q()
 {
 	current_menu = &m_edit_time_q;
-	current_menu->refresh();
-	sleep_enabled = true;
-}
-
-static void go_to_alarm_mode_q()
-{
-	current_menu = &m_change_to_alarm_mode_q;
-	current_menu->refresh();
-	sleep_enabled = true;
-}
-
-static void go_to_pir_mode_q()
-{
-	current_menu = &m_change_to_pir_mode_q;
 	current_menu->refresh();
 	sleep_enabled = true;
 }
@@ -926,11 +964,71 @@ static void go_to_edit_time()
 	sleep_enabled = false;
 }
 
-static void go_to_edit_alarms_q()
+static void go_to_change_mode_q()
 {
-	current_menu = &m_edit_alarms_q;
+	if (get_mode() == ALARM_MODE)
+	{
+		m_change_mode_q.on_dec = go_to_list_alarms_q;
+		m_change_mode_q.on_inc = go_to_edit_time_q;
+	}
+	else if (get_mode() == PIR_MODE)
+	{
+		m_change_mode_q.on_dec = do_nothing;
+		m_change_mode_q.on_inc = do_nothing;
+	}
+	else if (get_mode() == MANUAL_MODE)
+	{
+	}
+	current_menu = &m_change_mode_q;
 	current_menu->refresh();
 	sleep_enabled = true;
+}
+
+static void go_to_change_mode()
+{
+	current_menu = &m_change_mode;
+	current_menu->refresh();
+	sleep_enabled = false;
+}
+
+static void go_to_update_mode()
+{
+	set_mode(selected_mode);
+	go_to_home();
+}
+
+static void go_prev_mode()
+{
+	switch (selected_mode)
+	{
+		case PIR_MODE:
+			selected_mode = MANUAL_MODE;
+			break;
+		case ALARM_MODE:
+			selected_mode = PIR_MODE;
+			break;
+		case MANUAL_MODE:
+			selected_mode = ALARM_MODE;
+			break;
+	}
+	current_menu->refresh();
+}
+
+static void go_next_mode()
+{
+	switch (selected_mode)
+	{
+		case PIR_MODE:
+			selected_mode = ALARM_MODE;
+			break;
+		case ALARM_MODE:
+			selected_mode = MANUAL_MODE;
+			break;
+		case MANUAL_MODE:
+			selected_mode = PIR_MODE;
+			break;
+	}
+	current_menu->refresh();
 }
 
 static void display_current_timeday()
@@ -950,7 +1048,7 @@ static void display_current_timeday()
 	char text[17];
 	memset(text,'\0',17);
 	sprintf(text, "MODE: ");
-	mode_to_string(is_alarm_mode(), &text[6]);
+	mode_to_string(get_mode(), &text[6]);
 	display_print_text(display, text);
 
 	//disable cursor and blink
@@ -977,7 +1075,7 @@ static void display_current_pir_status()
 
 	memset(text,'\0',17);
 	sprintf(text, "MODE: ");
-	mode_to_string(is_alarm_mode(), &text[6]);
+	mode_to_string(get_mode(), &text[6]);
 	display_print_text(display, text);
 
 	//disable cursor and blink
@@ -990,15 +1088,20 @@ static void do_nothing()
 
 static void go_to_home()
 {
-	if (is_alarm_mode())
+	if (get_mode() == ALARM_MODE)
 	{
 		current_menu = &m_current_time;
 		current_menu->refresh();
 
 	}
-	else
+	else if (get_mode() == PIR_MODE)
 	{
 		current_menu = &m_current_pir_status;
+		current_menu->refresh();
+	}
+	else if (get_mode() == MANUAL_MODE)
+	{
+		current_menu = &m_current_manual_status;
 		current_menu->refresh();
 	}
 	sleep_enabled = true;

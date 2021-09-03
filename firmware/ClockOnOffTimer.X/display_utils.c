@@ -126,12 +126,20 @@ void alarm_days_to_string(alarm_t *alarm, char *string)
 	string[13] = '\0';
 }
 
-void mode_to_string(bool alarm_npir_mode, char *string)
+void mode_to_string(mode_t mode, char *string)
 {
 	unsigned idx_dir = 0;
-	if (alarm_npir_mode)
+	switch (mode)
 	{
-		idx_dir = 1;
+		case PIR_MODE:
+			idx_dir = 0;
+			break;
+		case ALARM_MODE:
+			idx_dir = 1;
+			break;
+		case MANUAL_MODE:
+			idx_dir = 2;
+			break;
 	}
 
 	sprintf(string,"%s", mode_str[idx_dir]);

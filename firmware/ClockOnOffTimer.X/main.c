@@ -58,7 +58,6 @@
 #include "button.h"
 //pir
 #include "smart_pir.h"
-#define TIME_TO_SPIN_MS 2000
 
 /*
                          Main application
@@ -86,7 +85,7 @@ void main(void)
     config_devices();
     load_motor_alarms_default();
     init_menus();
-    set_to_pir_mode();
+    set_mode(PIR_MODE);
 
     button_t button;
     uint32_t time_menu_last_event = sys_time_get_ms();
@@ -96,7 +95,7 @@ void main(void)
     {
         // Add your application code
 	// monitor the time when the motor should be off
-	motor_spin_time_monitor(get_motor(), TIME_TO_SPIN_MS);
+	motor_spin_time_monitor(get_motor(), get_time_to_spin());
 	current_menu = get_current_menu();
 	// is timeout menu?
 	if (sys_time_get_ms() - time_menu_last_event > current_menu->timeout_ms )
@@ -129,7 +128,7 @@ void main(void)
 		menu_sleep();
 	}
 	//mode validation
-	if (is_alarm_mode())
+	if (get_mode() == ALARM_MODE)
 	{
 		/*uint8_t count = count_motor_alarms();
 		uint8_t idx;
@@ -177,11 +176,14 @@ void main(void)
 			alarms++;
 		}
 	}
-	else
+	else if (get_mode() == PIR_MODE)
 	{
 		smart_pir_t *pir = get_pir();
 		smart_pir_device_monitor(pir);
-		//log test
+	}
+	else if (get_mode() == MANUAL_MODE)
+	{
+
 	}
     }
 }

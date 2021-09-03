@@ -49,6 +49,7 @@
       <itemPath>motor_utils.h</itemPath>
       <itemPath>day_alarm.h</itemPath>
       <itemPath>display_pos.h</itemPath>
+      <itemPath>mode.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
