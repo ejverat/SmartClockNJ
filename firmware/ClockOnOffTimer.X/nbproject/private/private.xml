@@ -3,52 +3,7 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/motor.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/ds1307.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcp23s17.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/display_utils.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/motor_alarm.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/ds1307.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/i2c_bus_config.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/ds3231.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcc_generated_files/examples/i2c2_master_example.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/motor.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/display_utils.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/i2c_bus_config.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/time_day.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcc_generated_files/tmr0.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/menu.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/user_input.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/menu.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/motor_utils.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/io_manager.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/button.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/dual_alarm_utils.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/time_day.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/ds3231.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcc_generated_files/examples/i2c2_master_example.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/alarm_utils.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/text_display.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/i2c_bus.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/io_manager.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/time_day_utils.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcc_generated_files/interrupt_manager.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/alarm_utils.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/motor_alarm.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/button.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/i2c_bus.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/time_day_utils.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/config.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/clock.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/sys_time.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/smart_pir.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/clock.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/config.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/smart_pir.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/alarm.h</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/mcc_generated_files/i2c2_master.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/main.c</file>
-            <file>file:/home/evera/MPLABXProjects/ClockOnOffTimer.X/display_pos.h</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/mode.h</file>
         </group>
     </open-files>
 </project-private>

@@ -39,7 +39,7 @@ static smart_pir_t spir;
 static dual_day_alarm_t dualday_alarms[7];
 
 static mode_t current_mode;
-static uint64_t time_to_spin;
+static uint32_t time_to_spin;
 
 
 static void config_sys_timer();
@@ -124,12 +124,12 @@ void set_mode(mode_t mode)
 {
 	current_mode = mode;
 }
-uint64_t get_time_to_spin()
+uint32_t get_time_to_spin()
 {
 	return time_to_spin;
 }
 
-void set_time_to_spin(uint64_t time_ms)
+void set_time_to_spin(uint32_t time_ms)
 {
 	time_to_spin = time_ms;
 }

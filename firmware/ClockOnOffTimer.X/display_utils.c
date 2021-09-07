@@ -106,6 +106,10 @@ void motor_direction_to_string(motor_direction_t direction, char *string)
 	{
 		idx_dir = 1;
 	}
+	else if (direction == off)
+	{
+		idx_dir = 2;
+	}
 
 	sprintf(string,"%s", motor_direction_str[idx_dir]);
 }

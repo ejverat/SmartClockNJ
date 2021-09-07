@@ -48,8 +48,8 @@ extern "C" {
 	dual_day_alarm_t *get_dualday_alarms();
 	mode_t get_mode();
 	void set_mode(mode_t mode);
-	uint64_t get_time_to_spin();
-	void set_time_to_spin(uint64_t time_ms);
+	uint32_t get_time_to_spin();
+	void set_time_to_spin(uint32_t time_ms);
 
 #ifdef	__cplusplus
 }

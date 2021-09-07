@@ -25,7 +25,7 @@ const char day_str[7][4] = {
 
 const char hour_pm_am_str[2][3] = {"AM","PM"};
 const char day_enabled_str[2] = {'X','E'};
-const char motor_direction_str[2][6] = {"RIGHT","LEFT"};
+const char motor_direction_str[3][6] = {"RIGHT","LEFT","OFF"};
 const char alarm_type_str[2][6] = {"ON ","OFF"};
 const char mode_str[3][7] = {"PIR","ALARM","MANUAL"};
 const char alarm_status_str[2][9] = {"INACTIVE","ACTIVE  "};

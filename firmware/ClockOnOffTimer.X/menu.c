@@ -19,6 +19,7 @@
 static const uint32_t max_timeout_value = 4294967295;
 
 static bool sleep_enabled;
+static uint32_t spin_time;
 
 static menu_t *current_menu;
 static menu_t m_current_time;
@@ -35,6 +36,10 @@ static menu_t m_edit_off_alarm_q;
 static menu_t m_edit_on_alarm;
 static menu_t m_edit_off_alarm;
 static menu_t m_current_manual_status;
+static menu_t m_move_motor_q;
+static menu_t m_move_motor;
+static menu_t m_change_spin_time_q;
+static menu_t m_change_spin_time;
 
 typedef enum 
 {
@@ -95,6 +100,11 @@ static void display_edit_on_alarm();
 static void display_edit_off_alarm();
 static void display_change_mode_q();
 static void display_change_mode();
+static void display_manual_status();
+static void display_move_motor_q();
+static void display_move_motor();
+static void display_change_spin_time_q();
+static void display_change_spin_time();
 static void go_to_current_time();
 static void go_to_pir_status();
 static void go_to_pir_mode();
@@ -114,6 +124,15 @@ static void go_to_next_dualday_alarm();
 static void go_to_edit_on_alarm();
 static void go_to_edit_off_alarm();
 static void go_to_next_dualday_alarm_field();
+static void go_to_move_motor_q();
+static void go_to_move_motor();
+static void go_to_change_spin_time_q();
+static void go_to_spin_left_motor();
+static void go_to_spin_right_motor();
+static void go_to_change_spin_time();
+static void update_spin_time();
+static void dec_spin_time();
+static void inc_spin_time();
 static void dec_dualday_alarm_field();
 static void inc_dualday_alarm_field();
 static void change_mode();
@@ -160,6 +179,7 @@ menu_t *get_current_menu()
 void init_menus()
 {
 	sleep_enabled = true;
+	spin_time = get_time_to_spin();
 
 	/* Menu config for pir mode*/
 
@@ -279,13 +299,24 @@ void init_menus()
 
 	m_move_motor.refresh = display_move_motor;
 	m_move_motor.on_ok = go_to_home;
-	m_move_motor.on_dec = go_to_off_motor;
-	m_move_motor.on_inc = go_to_on_motor;
-	m_move_motor.on_timeout = do_nothing;
-	m_move_motor.timeout_ms = max_timeout_value;
+	m_move_motor.on_dec = go_to_spin_left_motor;
+	m_move_motor.on_inc = go_to_spin_right_motor;
+	m_move_motor.on_timeout = display_move_motor;
+	m_move_motor.timeout_ms = TIMEOUT_DISPLAY;
 
-	m_change_spin_time_q
-	m_change_spin_time
+	m_change_spin_time_q.refresh = display_change_spin_time_q;
+	m_change_spin_time_q.on_ok = go_to_change_spin_time;
+	m_change_spin_time_q.on_dec = go_to_move_motor_q;
+	m_change_spin_time_q.on_inc = go_to_change_mode_q;
+	m_change_spin_time_q.on_timeout = go_to_home;
+	m_change_spin_time_q.timeout_ms = TIMEOUT_INACTIVITY;
+
+	m_change_spin_time.refresh = display_change_spin_time;
+	m_change_spin_time.on_ok = update_spin_time;
+	m_change_spin_time.on_dec = dec_spin_time;
+	m_change_spin_time.on_inc = inc_spin_time;
+	m_change_spin_time.on_timeout = do_nothing;
+	m_change_spin_time.timeout_ms = max_timeout_value;
 
 	m_sleep.refresh = do_nothing;
 	m_sleep.on_ok = go_to_wake;
@@ -714,6 +745,7 @@ static void display_change_mode_q()
 static void display_change_mode()
 {
 	text_display_t *display = get_text_display();
+	display_clear(display);
 	//display text
 	display_set_cursor(display, 0, 0);
 	display_print_text(display, "MODE(+,ok,-)");
@@ -721,7 +753,7 @@ static void display_change_mode()
 
 	char text[17];
 	memset(text,'\0',17);
-	mode_to_string(selected_mode, &text[6]);
+	mode_to_string(selected_mode, text);
 	display_print_text(display, text);
 
 	//enable cursor and blink
@@ -729,6 +761,84 @@ static void display_change_mode()
 	display_blink_on(display);
 	display_set_cursor(display, 0, 1);
 
+}
+
+static void display_manual_status()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	//display text
+	display_set_cursor(display, 0, 0);
+	display_print_text(display, "MODE:MANUAL");
+	display_cursor_off(display);
+	display_blink_off(display);
+}
+
+static void display_move_motor_q()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	display_set_cursor(display,0,0);
+	display_cursor_off(display);
+	display_blink_off(display);
+	display_print_text(display,"MOVE MOTOR?");
+	display_set_cursor(display,0,0);
+	display_set_cursor(display, 0, 1);
+	display_print_text(display,"(-,ok,+)");
+}
+
+static void display_move_motor()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	//display text
+	display_set_cursor(display, 0, 0);
+	display_print_text(display, "MOVE(+,ok,-)");
+	display_set_cursor(display, 0, 1);
+
+	char text[17];
+	memset(text,'\0',17);
+	motor_t *motor = get_motor();
+	motor_direction_to_string(motor->direction, text);
+	display_print_text(display, text);
+
+	//enable cursor and blink
+	display_cursor_on(display);
+	display_blink_on(display);
+	display_set_cursor(display, 0, 1);
+}
+
+static void display_change_spin_time_q()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	display_set_cursor(display,0,0);
+	display_cursor_off(display);
+	display_blink_off(display);
+	display_print_text(display,"CHANGE SPIN T.?");
+	display_set_cursor(display,0,0);
+	display_set_cursor(display, 0, 1);
+	display_print_text(display,"(-,ok,+)");
+}
+
+static void display_change_spin_time()
+{
+	text_display_t *display = get_text_display();
+	display_clear(display);
+	//display text
+	display_set_cursor(display, 0, 0);
+	display_print_text(display, "SPIN T.(+,ok,-)");
+	display_set_cursor(display, 0, 1);
+
+	char text[17];
+	memset(text,'\0',17);
+	sprintf(text, "%10.10d ms",spin_time);
+	display_print_text(display, text);
+
+	//enable cursor and blink
+	display_cursor_on(display);
+	display_blink_on(display);
+	display_set_cursor(display, 0, 1);
 }
 
 static void go_to_current_time()
@@ -978,6 +1088,8 @@ static void go_to_change_mode_q()
 	}
 	else if (get_mode() == MANUAL_MODE)
 	{
+		m_change_mode_q.on_dec = go_to_change_spin_time_q;
+		m_change_mode_q.on_inc = go_to_move_motor_q;
 	}
 	current_menu = &m_change_mode_q;
 	current_menu->refresh();
@@ -1129,4 +1241,64 @@ static void motor_spin_to_right()
 {
 	motor_t *motor = get_motor();
 	spin_motor_right(motor);
+}
+
+static void go_to_move_motor_q()
+{
+	current_menu = &m_move_motor_q;
+	current_menu->refresh();
+	sleep_enabled = true;
+}
+static void go_to_move_motor()
+{
+	current_menu = &m_move_motor;
+	current_menu->refresh();
+	sleep_enabled = false;
+}
+
+static void go_to_change_spin_time_q()
+{
+	current_menu = &m_change_spin_time_q;
+	current_menu->refresh();
+	sleep_enabled = true;
+}
+
+static void go_to_spin_left_motor()
+{
+	motor_spin_to_left();
+	current_menu->refresh();
+	sleep_enabled = false;
+}
+
+static void go_to_spin_right_motor()
+{
+	motor_spin_to_right();
+	current_menu->refresh();
+	sleep_enabled = false;
+}
+
+static void go_to_change_spin_time()
+{
+	spin_time = get_time_to_spin();
+	current_menu =  &m_change_spin_time;
+	current_menu->refresh();
+	sleep_enabled = false;
+}
+
+static void update_spin_time()
+{
+	set_time_to_spin(spin_time);
+	go_to_home();
+}
+
+static void dec_spin_time()
+{
+	spin_time -= 100;
+	current_menu->refresh();
+}
+
+static void inc_spin_time()
+{
+	spin_time += 100;
+	current_menu->refresh();
 }
