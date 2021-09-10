@@ -284,11 +284,11 @@ void init_menus()
 
 	/* Menu config for Manual mode */
 	m_current_manual_status.refresh = display_manual_status;
-	m_current_manual_status.on_ok = display_manual_status;
-	m_current_manual_status.on_dec = go_to_change_mode_q;
-	m_current_manual_status.on_inc = go_to_move_motor_q;
-	m_current_manual_status.on_timeout = go_to_wake;
-	m_current_manual_status.timeout_ms = TIMEOUT_DISPLAY;
+	m_current_manual_status.on_ok = go_to_change_mode_q;
+	m_current_manual_status.on_dec = go_to_spin_left_motor;
+	m_current_manual_status.on_inc = go_to_spin_right_motor;
+	m_current_manual_status.on_timeout = do_nothing;
+	m_current_manual_status.timeout_ms = max_timeout_value;
 
 	m_move_motor_q.refresh = display_move_motor_q;
 	m_move_motor_q.on_ok = go_to_move_motor;
@@ -770,6 +770,8 @@ static void display_manual_status()
 	//display text
 	display_set_cursor(display, 0, 0);
 	display_print_text(display, "MODE:MANUAL");
+	display_set_cursor(display, 0, 1);
+	display_print_text(display,"UP=ON , DOWN=OFF");
 	display_cursor_off(display);
 	display_blink_off(display);
 }
@@ -1080,20 +1082,22 @@ static void go_to_change_mode_q()
 	{
 		m_change_mode_q.on_dec = go_to_list_alarms_q;
 		m_change_mode_q.on_inc = go_to_edit_time_q;
+		sleep_enabled = true;
 	}
 	else if (get_mode() == PIR_MODE)
 	{
 		m_change_mode_q.on_dec = do_nothing;
 		m_change_mode_q.on_inc = do_nothing;
+		sleep_enabled = true;
 	}
 	else if (get_mode() == MANUAL_MODE)
 	{
-		m_change_mode_q.on_dec = go_to_change_spin_time_q;
-		m_change_mode_q.on_inc = go_to_move_motor_q;
+		m_change_mode_q.on_dec = do_nothing;
+		m_change_mode_q.on_inc = do_nothing;
+		sleep_enabled = false;
 	}
 	current_menu = &m_change_mode_q;
 	current_menu->refresh();
-	sleep_enabled = true;
 }
 
 static void go_to_change_mode()
@@ -1204,19 +1208,21 @@ static void go_to_home()
 	{
 		current_menu = &m_current_time;
 		current_menu->refresh();
+		sleep_enabled = true;
 
 	}
 	else if (get_mode() == PIR_MODE)
 	{
 		current_menu = &m_current_pir_status;
 		current_menu->refresh();
+		sleep_enabled = true;
 	}
 	else if (get_mode() == MANUAL_MODE)
 	{
 		current_menu = &m_current_manual_status;
 		current_menu->refresh();
+		sleep_enabled = false;
 	}
-	sleep_enabled = true;
 }
 
 static void go_to_sleep()

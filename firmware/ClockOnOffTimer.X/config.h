@@ -20,8 +20,8 @@
 #define SLEEP_TIMEOUT_MS 5000
 
 
-//#define USE_DS3231
-#define USE_DS1307
+#define USE_DS3231
+//#define USE_DS1307
 
 #if !defined (USE_DS1307) && !defined (USE_DS3231)
 #define USE_DS1307

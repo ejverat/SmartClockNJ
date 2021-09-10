@@ -50,6 +50,7 @@
       <itemPath>day_alarm.h</itemPath>
       <itemPath>display_pos.h</itemPath>
       <itemPath>mode.h</itemPath>
+      <itemPath>logger.h</itemPath>
     </logicalFolder>
     <logicalFolder name="LinkerScript"
                    displayName="Linker Files"
@@ -107,6 +108,7 @@
       <itemPath>Makefile</itemPath>
       <itemPath>ClockOnOffTimer.mc3</itemPath>
     </logicalFolder>
+    <itemPath>logger.c</itemPath>
   </logicalFolder>
   <projectmakefile>Makefile</projectmakefile>
   <confs>

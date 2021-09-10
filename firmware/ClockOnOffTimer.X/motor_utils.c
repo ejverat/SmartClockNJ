@@ -1,6 +1,7 @@
 #include "motor_utils.h"
 #include "motor.h"
 #include "sys_time.h"
+#include "logger.h"
 
 static uint32_t on_start_time;
 
@@ -24,6 +25,7 @@ void spin_motor_left(motor_t *motor)
 	motor->pin_dir1_low_fn();
 	motor->pin_dir2_high_fn();
 	on_start_time = sys_time_get_ms();
+	logger_add("MOTL");
 
 }
 void spin_motor_right(motor_t *motor)
@@ -32,10 +34,12 @@ void spin_motor_right(motor_t *motor)
 	motor->pin_dir1_high_fn();
 	motor->pin_dir2_low_fn();
 	on_start_time = sys_time_get_ms();
+	logger_add("MOTR");
 }
 
 void motor_off(motor_t *motor)
 {
+	logger_add("MOTX");
 	motor->direction = off;
 	motor->pin_dir1_low_fn();
 	motor->pin_dir2_low_fn();

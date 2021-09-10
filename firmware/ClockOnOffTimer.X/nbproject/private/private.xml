@@ -3,7 +3,13 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/config.h</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/button.c</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/logger.c</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/smart_pir.c</file>
             <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/mode.h</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/main.c</file>
+            <file>file:/home/evera/Projects/SmartClockNJ/firmware/ClockOnOffTimer.X/logger.h</file>
         </group>
     </open-files>
 </project-private>

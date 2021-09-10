@@ -20,11 +20,12 @@
 #include "mcc_generated_files/tmr0.h"
 #include "mcc_generated_files/i2c2_master.h"
 #include "mcc_generated_files/pin_manager.h"
+#include "logger.h"
 
 #define LCD_RS 		0b10000000
 #define LCD_ENABLE 	0b01000000
 
-#define DEFAULT_TIME_TO_SPIN_MS  2000
+#define DEFAULT_TIME_TO_SPIN_MS  3000
 
 static mcp23s17_t io_expander;
 static text_display_t display;
@@ -269,10 +270,12 @@ static void pir_handler()
 	if (spir.pir.pin_status_fn() == HIGH)
 	{
 		set_pir_status(&spir,true);
+		logger_add("PIRH");
 	}
 	else
 	{
 		set_pir_status(&spir,false);
+		logger_add("PIRL");
 	}
 }
 static void lcd_write(uint8_t byte)
